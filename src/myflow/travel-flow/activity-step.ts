@@ -14,7 +14,6 @@ import { Step, Flow, Prompt, ToolType, ToolResponseType } from '@picoflow/core';
 import { DirectMessage } from '@picoflow/core/utils/message-util';
 import { TravelPrompts } from './prompts';
 
-
 export class ActivityStep extends Step {
   constructor(flow: Flow, isActive?: boolean) {
     super(ActivityStep, flow, isActive);

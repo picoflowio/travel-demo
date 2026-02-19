@@ -13,7 +13,6 @@ import { ActivityStep } from './activity-step';
 import { SynthesizerStep } from './synthesizer-step';
 import { EndStep, Flow, Step } from '@picoflow/core';
 
-
 export class TravelFlow extends Flow {
   public constructor() {
     super(TravelFlow);

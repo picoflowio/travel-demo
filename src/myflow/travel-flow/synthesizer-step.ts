@@ -19,7 +19,13 @@ import { PlannerStep } from './planner-step';
 import { FlightStep } from './flight-step';
 import { HotelStep } from './hotel-step';
 import { ActivityStep } from './activity-step';
-import { Step, Flow, ToolType, ToolResponseType, EndStep } from '@picoflow/core';
+import {
+  Step,
+  Flow,
+  ToolType,
+  ToolResponseType,
+  EndStep,
+} from '@picoflow/core';
 
 export class SynthesizerStep extends Step {
   constructor(flow: Flow, isActive?: boolean) {

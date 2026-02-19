@@ -9,7 +9,12 @@
 import { z } from 'zod';
 
 export const TravelPlanSchema = z.object({
-  user_intent: z.enum(['full_plan', 'flights_only', 'hotels_only', 'activities_only']),
+  user_intent: z.enum([
+    'full_plan',
+    'flights_only',
+    'hotels_only',
+    'activities_only',
+  ]),
   origin: z.string().describe('Starting location'),
   destination: z.string().describe('Final destination'),
   departure_date: z.date().describe('US date format preferred'),
@@ -19,7 +24,6 @@ export const TravelPlanSchema = z.object({
   travel_class: z.string().default('ECONOMY'),
   budget: z.number().optional().describe('Total budget'),
 });
-
 
 export type TravelPlan = z.infer<typeof TravelPlanSchema>;
 
