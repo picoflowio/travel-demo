@@ -37,13 +37,6 @@ export class ChatController {
     flowEngine.registerFlows({ TravelFlow });
 
     //register models
-    flowEngine.registerModel(ChatGoogleGenerativeAI, {
-      model: 'gemini-2.5-pro',
-      temperature: CoreConfig.llmTemperature,
-      apiKey: CoreConfig.GeminiKey,
-      maxRetries: CoreConfig.llmRetry,
-    });
-
     flowEngine.registerModel(ChatOpenAI, {
       model: 'gpt-4o',
       temperature: CoreConfig.llmTemperature,

@@ -19,7 +19,7 @@ export class TravelFlow extends Flow {
   }
 
   protected defineSteps(): Step[] {
-    const model = 'gemini-2.5-pro';
+    const model = 'gpt-4o';
 
     return [
       new PlannerStep(this, true).useModel(model).useMemory('travelPlan'),
