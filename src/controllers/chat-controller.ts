@@ -18,8 +18,6 @@ import { K } from '@picoflow/core/utils/constants';
 import { CoreConfig } from '@picoflow/core';
 import { FlowEngine } from '@picoflow/core';
 
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { ChatOpenAI } from '@langchain/openai';
 import {
   ApiEndResponseDto,
   ApiRunResponse400Dto,
@@ -28,6 +26,7 @@ import {
   ApiRunBodyDto,
 } from './api-types';
 import { TravelFlow } from 'src/myflow/travel-flow/travel-flow';
+import { Model } from '@picoflow/core/models/model-registry';
 
 @ApiTags('ai')
 @Controller('ai')
@@ -37,19 +36,23 @@ export class ChatController {
     flowEngine.registerFlows({ TravelFlow });
 
     //register models
-    flowEngine.registerModel(ChatGoogleGenerativeAI, {
-      model: 'gemini-2.5-pro',
-      temperature: CoreConfig.llmTemperature,
-      apiKey: CoreConfig.GeminiKey,
-      maxRetries: CoreConfig.llmRetry,
-    });
+    flowEngine.registerModel(
+      new Model('gpt-5', {
+        apiKey: CoreConfig.OpenAIKey,
+        maxRetries: CoreConfig.llmRetry,
+        reasoning: { effort: 'low' },
+      }),
+      true,
+    );
 
-    flowEngine.registerModel(ChatOpenAI, {
-      model: 'gpt-4o',
-      temperature: CoreConfig.llmTemperature,
-      apiKey: CoreConfig.OpenAIKey,
-      maxRetries: CoreConfig.llmRetry,
-    });
+    flowEngine.registerModel(
+      new Model('gpt-4o', {
+        temperature: CoreConfig.llmTemperature,
+        apiKey: CoreConfig.OpenAIKey,
+        maxRetries: CoreConfig.llmRetry,
+      }),
+      true,
+    );
   }
   //.................................................................
   @HttpCode(HttpStatus.OK)

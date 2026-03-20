@@ -16,18 +16,19 @@ import { EndStep, Flow, Step } from '@picoflow/core';
 export class TravelFlow extends Flow {
   public constructor() {
     super(TravelFlow);
+    this.useModel('gpt-4o');
   }
 
   protected defineSteps(): Step[] {
-    const model = 'gemini-2.5-pro';
+    const model = 'gpt-5';
 
     return [
       new PlannerStep(this, true).useModel(model).useMemory('travelPlan'),
       new FlightStep(this).useModel(model).useMemory('travelPlan'),
-      new HotelStep(this).useModel(model).useMemory('travelPlan'),
-      new ActivityStep(this).useModel(model).useMemory('travelPlan'),
+      new HotelStep(this).useMemory('travelPlan'),
+      new ActivityStep(this).useMemory('travelPlan'),
       new SynthesizerStep(this).useModel(model).useMemory('travelPlan'),
-      new EndStep(this).useModel(model),
+      new EndStep(this),
     ];
   }
 }
