@@ -1,35 +1,31 @@
-## Description
-This the a non-trivial demonstration project how to use picoflow, the Conversational Agentic flow.
-This is a Hotel reservation using Purposeful Chatbot mechanism for Hilton Hotels.
+## Overview
+Lightweight travel-planning flow built with picoflow's Purposeful Chatbot engine. The TravelFlow orchestrates planner, flight, hotel, activity, and synthesizer steps to propose a simple itinerary — no hotel-brand pricing simulation or heavy business logic from the hotel-demo repo.
 
-We have also created a simulation of pricing engine that takes into considerations of weekends, holidays, months, etc.
+## Quick start
+- Copy env template: `cp .env-example .env` and fill in your keys (OpenAI/Gemini/Anthropic + PICOFLOW_KEY). Choose your document DB driver.
+- Install deps: `yarn install`
+- Run locally: `yarn start` (builds then watches) or `yarn start:dev` for hot reload.
+- Open API docs: http://localhost:8000/api
 
-## Project setup
-```bash
-$ yarn install
+## Calling the flow
+POST `http://localhost:8000/ai/run`
+
+Headers
+- `CHAT_SESSION_ID` – omit on the first call; reuse the value returned in the response header for follow-up turns.
+
+Body
+```json
+{
+  "flowName": "TravelFlow",
+  "message": "Plan a 5-day trip to Lisbon in June with flights, hotel and a couple of activities",
+  "config": {}
+}
 ```
 
-## Document DB setup
-In order to run this project, you need to decide to use a MongoDB or a CosmoDB.
-Both have support locally or in the Cloud.
+To close a conversation: POST `http://localhost:8000/ai/end` with `CHAT_SESSION_ID` in the headers.
 
-Create 1 collection for your document DB:
-```text
-sessions
-```
-
-## Compile and run the project
-```bash
-# development
-$ yarn start
-```
-
-
-## License Key
-Get a trial license key by email to `dev@picoflow.io`
-
-# Environment variables:
-.env.example - Copy to .env and fill in values
+## Environment variables
+Values live in `.env-example` (copy to `.env`).
 
 ```text
 PICOFLOW_KEY=
@@ -49,16 +45,15 @@ COSMODB_URL=http://localhost:8081/
 COSMODB_ID=picoflow
 COSMODB_SESSION_ID=sessions
 
-#MONGODB_NAME=picoflow
-#MONGODB_COLLECTION=sessions
-#MONGODB_URL=mongodb://localhost:27017/?directConnection=true
+# For MongoDB
+MONGODB_NAME=picoflow
+MONGODB_COLLECTION=sessions
+MONGODB_URL=mongodb://localhost:27017/?directConnection=true
 ```
 
-## Endpoints
-You can go to http://localhost:8000/api#/ai/ChatController_run
+## Data store
+Use a single collection/table named `sessions` in either the Cosmos DB emulator or MongoDB. Local or cloud instances both work.
 
-Each turn, you want to take the `CHAT_SESSION_ID` from the response header and use that in the request header for next turn.
-
-Leave `CHAT_SESSION_ID` blank when you make the first call. A new session and ID will be created and returned. 
-
+## License key
+Request a trial `PICOFLOW_KEY` at `dev@picoflow.io`.
 
