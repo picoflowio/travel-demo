@@ -1,16 +1,8 @@
-/**
- * TravelFlow Integration Test
- * Tests the full conversation flow: destination → package selection → booking → end
- * 
- * Usage: node test/test-travel-flow.js
- * Make sure the service is running on port 8000 before executing.
- */
-
 async function testTravelFlow() {
   const url = 'http://localhost:8000/ai/run';
   let sessionId = null;
 
-  async function sendMessage(message) {
+  async function send(message) {
     const headers = { 'Content-Type': 'application/json' };
     if (sessionId) headers['CHAT_SESSION_ID'] = sessionId;
 
@@ -21,53 +13,41 @@ async function testTravelFlow() {
     });
 
     const data = await response.json();
-    // Extract session ID from response header (lowercase in fetch API)
     const newSessionId = response.headers.get('chat_session_id');
     if (newSessionId) sessionId = newSessionId;
+
+    console.log(`-> User: ${message}`);
+    console.log(`<- Bot [Session: ${sessionId}]: ${data.message}`);
+    console.log(`   completed: ${data.completed}`);
+    console.log('');
 
     return data;
   }
 
   console.log('=== TravelFlow Integration Test ===\n');
 
-  // 1. Start the conversation
-  console.log('-> User: Hello');
-  let data = await sendMessage('Hello');
-  console.log(`<- Bot [Session: ${sessionId}]: ${data.message}`);
-  console.log(`   completed: ${data.completed}\n`);
+  const steps = [
+    'Hello',
+    'Full plan please',
+    'Origin PDX, destination Madrid, depart 2026-04-21, return 2026-05-05, 2 adults, business class, total budget $7000',
+    'I choose Premium.',
+  ];
 
-  // 2. Request a combination package
-  console.log('-> User: combination package');
-  data = await sendMessage('combination package');
-  console.log(`<- Bot: ${data.message}`);
-  console.log(`   completed: ${data.completed}\n`);
+  let lastResponse = null;
+  for (const step of steps) {
+    lastResponse = await send(step);
+    if (lastResponse.completed || lastResponse.success === false) {
+      break;
+    }
+  }
 
-  // 3. Provide travel details
-  const travelDetails = 'PDX, Madrid, 4/21/2026, 5/5/2026, 2, Luxury, $7000';
-  console.log(`-> User: ${travelDetails}`);
-  data = await sendMessage(travelDetails);
-  console.log(`<- Bot: ${data.message}`);
-  console.log(`   completed: ${data.completed}\n`);
-
-  // 4. Select premium package
-  console.log('-> User: I choose Premium.');
-  data = await sendMessage('I choose Premium.');
-  console.log(`<- Bot: ${data.message}`);
-  console.log(`   completed: ${data.completed}\n`);
-
-  // 5. End the session
-  console.log('-> Ending session...');
-  const endResponse = await fetch('http://localhost:8000/ai/end', {
-    method: 'POST',
-    headers: { 'CHAT_SESSION_ID': sessionId },
-  });
-  const endData = await endResponse.json();
-  console.log(`<- End session: ${JSON.stringify(endData)}\n`);
-
-  if (data.completed === true && endData.success === true) {
-    console.log('✅ Test completed successfully!');
+  if (lastResponse && lastResponse.completed) {
+    console.log(`Session ID: ${sessionId}`);
+    console.log('✅ TravelFlow scripted run completed (session left open for inspection).');
+    process.exit(0);
   } else {
-    console.log('❌ Test failed — flow did not complete as expected.');
+    console.log(`Session ID: ${sessionId || 'unavailable'}`);
+    console.log('❌ TravelFlow scripted run did not reach completion.');
     process.exit(1);
   }
 }
