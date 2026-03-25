@@ -18,6 +18,14 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  // Add a simple onSend hook to set CORS header on every response
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization, CHAT_SESSION_ID',
+    exposedHeaders: 'CHAT_SESSION_ID',
+  });
+
   app.useStaticAssets({
     root: join(__dirname, '..', 'public'),
     prefix: '/public/',
@@ -33,6 +41,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(8000, '0.0.0.0');
+  await app.listen(8888, '0.0.0.0');
 }
 bootstrap();
